@@ -8,5 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface AlimentationRepository extends JpaRepository<Anime,Long> {
-    Optional<Anime> findByTitle(String title);
 }

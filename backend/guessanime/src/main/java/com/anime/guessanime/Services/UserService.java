@@ -45,12 +45,12 @@ public class UserService {
             String encodedPassword = passwordEncoder.encode(password);
             user.setEncodedPassword(encodedPassword);
 
-            System.out.println("Codificado: " + user.getEncodedPassword());
+            System.out.println("Coded: " + user.getEncodedPassword());
             userRepository.save(user);
-            System.out.println("Usuario salvo com sucesso");
+            System.out.println("User saved successfully");
 
         } catch (Exception e) {
-            System.out.println("Erro ao salvar usuario");
+            System.out.println("Error saving user");
             throw new RuntimeException("Error saving user:" + e.getMessage());
         }
     }
@@ -70,7 +70,7 @@ public class UserService {
         System.out.println("Email founded in our system");
 
         System.out.println(user.get().getEncodedPassword());
-        //Don't working as expected :<
+
         if (!passwordEncoder.matches(password,user.get().getEncodedPassword()))
             throw new IllegalAccessException("Password's wrong");
 

@@ -9,11 +9,11 @@ import lombok.Setter;
 public class Episode {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="ID_EPISODE")
     private long id;
 
     @Column(name="TITLE")
-    private String name;
+    private String title;
 
     @Column(name="SYNOPSIS")
     private String synopsis;
@@ -21,4 +21,9 @@ public class Episode {
     @ManyToOne
     @JoinColumn(name = "ID_ANIME")
     private Anime anime;
+
+    @Override
+    public String toString() {
+        return "Episode - " + getTitle() + "\n" + "Synopsis - " + getSynopsis();
+    }
 }

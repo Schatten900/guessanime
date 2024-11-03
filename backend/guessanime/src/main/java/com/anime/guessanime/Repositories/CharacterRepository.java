@@ -15,6 +15,6 @@ public interface CharacterRepository extends JpaRepository<CharacterAnime,Long> 
     @Query(value = "" +
             "SELECT AC.* FROM ANIME_CHARACTER as AC " +
             "JOIN ANIME as A ON AC.ID_ANIME = A.ID_ANIME " +
-            "WHERE A.TITLE = :animeTitle AND AC.NAME = :characterName", nativeQuery = true)
+            "WHERE A.TITLE = :animeTitle AND AC.NAME_CHAR = :characterName", nativeQuery = true)
     Optional<CharacterAnime> findCharacter(@Param("animeTitle") String animeTitle, @Param("characterName") String characterName);
 }

@@ -24,6 +24,8 @@ public class AlimentationController {
         try{
             System.out.println("Hello from frontend: " + data.getMessage());
             alimentationService.takeAnime();
+            alimentationService.takeCharsByAnime();
+
             return ResponseEntity.ok().body("Successfully on take anime");
         }
         catch(Exception e){

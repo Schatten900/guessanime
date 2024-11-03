@@ -24,16 +24,17 @@ public class AlimentationServiceTest {
 
     private final AlimentationRepository alimentationRepository;
     private final CharacterRepository characterRepository;
+
     @Autowired
-    public AlimentationService(AlimentationRepository alimentationRepository, CharacterRepository characterRepository){
+    public AlimentationServiceTest(AlimentationRepository alimentationRepository, CharacterRepository characterRepository){
         this.alimentationRepository = alimentationRepository;
         this.characterRepository = characterRepository;
     }
 
     protected final String URL_ANIME_TAKE = "https://kitsu.io/api/edge/anime";
 
-    public Optional<Anime> hasAnime(String title){
-        return alimentationRepository.findByTitle(title);
+    public Optional<Anime> hasAnime(long id){
+        return alimentationRepository.findById(id);
     }
 
     public Optional<CharacterAnime> hasCharacter(String animeTitle, String characterName){
@@ -67,6 +68,7 @@ public class AlimentationServiceTest {
 
             //Save the list on database
             for (JsonNode animeItem : animeArray){
+                long id = animeItem.get("id").asLong();
                 String title = animeItem.get("attributes").has("titles") && animeItem.get("attributes").get("titles").has("en")
                         ? animeItem.get("attributes").get("titles").get("en").asText()
                         : null;
@@ -80,7 +82,7 @@ public class AlimentationServiceTest {
                 System.out.println(animeItem.get("id").asText() + " - " + title);
 
                 Anime animeAux = new Anime(title,synopsis);
-                Optional<Anime> existAnime = hasAnime(title);
+                Optional<Anime> existAnime = hasAnime(id);
 
                 if (existAnime.isPresent())
                     continue;
@@ -103,6 +105,8 @@ public class AlimentationServiceTest {
 
             //Logic to search for all characters one by one on anime
             for (Anime anime : allAnimes) {
+                System.out.println(anime);
+
                 HttpClient client = HttpClient.newBuilder().build();
 
                 HttpRequest request = HttpRequest.newBuilder()
@@ -134,10 +138,12 @@ public class AlimentationServiceTest {
                     CharacterAnime charAux = new CharacterAnime(nameChar, image);
                     Optional<CharacterAnime> existChar = hasCharacter(anime.getTitle(), nameChar);
 
+                    System.out.println("Is present? " + existChar);
                     if (existChar.isPresent())
                         continue;
 
                     charAux.setAnime(anime);
+                    System.out.println(charAux);
                     characterRepository.save(charAux);
                 }
             }
