@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequestMapping("/alimentation")
 public class AlimentationController {
@@ -23,8 +24,9 @@ public class AlimentationController {
     public ResponseEntity<String> takeAnimeAndChars(@RequestBody RequestDTO data){
         try{
             System.out.println("Hello from frontend: " + data.getMessage());
-            alimentationService.takeAnime();
-            alimentationService.takeCharsByAnime();
+            alimentationService.takeCharsIds();
+            //alimentationService.takeAnime();
+            //alimentationService.takeCharsByAnime();
 
             return ResponseEntity.ok().body("Successfully on take anime");
         }

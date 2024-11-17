@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import com.anime.guessanime.Models.Anime;
-import com.anime.guessanime.Models.CharacterAnime;
+import com.anime.guessanime.Models.Character;
 import com.anime.guessanime.Repositories.AlimentationRepository;
 import com.anime.guessanime.Repositories.CharacterRepository;
 
@@ -37,7 +37,7 @@ public class AlimentationServiceTest {
         return alimentationRepository.findById(id);
     }
 
-    public Optional<CharacterAnime> hasCharacter(String animeTitle, String characterName){
+    public Optional<Character> hasCharacter(String animeTitle, String characterName){
         return characterRepository.findCharacter(animeTitle,characterName);
     }
 
@@ -135,8 +135,8 @@ public class AlimentationServiceTest {
                     if (nameChar == null)
                         continue;
 
-                    CharacterAnime charAux = new CharacterAnime(nameChar, image);
-                    Optional<CharacterAnime> existChar = hasCharacter(anime.getTitle(), nameChar);
+                    Character charAux = new Character(nameChar, image);
+                    Optional<Character> existChar = hasCharacter(anime.getTitle(), nameChar);
 
                     System.out.println("Is present? " + existChar);
                     if (existChar.isPresent())

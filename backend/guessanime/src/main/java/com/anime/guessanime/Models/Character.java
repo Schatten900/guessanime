@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name="ANIME_CHARACTER")
-public class CharacterAnime {
+public class Character {
     @Id
     @Column(name="ID_CHAR")
     private long id;
@@ -22,24 +22,14 @@ public class CharacterAnime {
     @JoinColumn(name="ID_ANIME")
     private Anime anime;
 
-    public CharacterAnime(){}
+    public Character(){}
 
-    public CharacterAnime(long id){
-        this.id = id;
-    }
-
-    public CharacterAnime(long id, String name, String image){
-        this.id = id;
-        this.name = name;
-        this.image = image;
-    }
-
-    public CharacterAnime(long id, Anime anime){
+    public Character(long id, Anime anime){
         this.id = id;
         this.anime = anime;
     }
 
-    public CharacterAnime(String name,String image){
+    public Character(String name, String image){
         this.name = name;
         this.image = image;
     }

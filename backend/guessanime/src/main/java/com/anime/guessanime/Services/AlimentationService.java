@@ -1,11 +1,10 @@
 package com.anime.guessanime.Services;
 import com.anime.guessanime.Models.Anime;
-import com.anime.guessanime.Models.CharacterAnime;
+import com.anime.guessanime.Models.Character;
 import com.anime.guessanime.Repositories.AlimentationRepository;
 import com.anime.guessanime.Repositories.CharacterRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mysql.cj.xdevapi.JsonArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +35,7 @@ public class AlimentationService {
         return alimentationRepository.findById(id);
     }
 
-    public Optional<CharacterAnime> hasCharacter(String animeTitle, String characterName){
+    public Optional<Character> hasCharacter(String animeTitle, String characterName){
         return characterRepository.findCharacter(animeTitle,characterName);
     }
 
@@ -122,7 +121,7 @@ public class AlimentationService {
                     continue;
                 String actual_title_anime = animeItem.getTitle();
                 System.out.println("Taking all characters from " + actual_title_anime);
-                for (CharacterAnime charItem : animeItem.getCharacters()) {
+                for (Character charItem : animeItem.getCharacters()) {
 
                     if (charItem == null)
                         continue;
@@ -158,7 +157,7 @@ public class AlimentationService {
                     }
 
                     System.out.println("Checking if character already exists...");
-                    Optional<CharacterAnime> existChar = hasCharacter(actual_title_anime,charName);
+                    Optional<Character> existChar = hasCharacter(actual_title_anime,charName);
 
                     if (existChar.isPresent()) {
                         System.out.println("Already exists on database that character");
@@ -178,10 +177,9 @@ public class AlimentationService {
             System.out.println(e.getMessage());
             throw new RuntimeException("Error getting anime:" + e.getMessage());
         }
-
     }
 
-    private List<Anime> takeCharsIds() throws IOException, InterruptedException {
+    public List<Anime> takeCharsIds() throws IOException, InterruptedException {
         //Take all anime on the database
 
         System.out.println("Taking ids...");
@@ -191,6 +189,7 @@ public class AlimentationService {
         HttpClient client = HttpClient.newBuilder().build();
 
         for (Anime animeItem : allAnimes){
+            System.out.println(animeItem.getTitle() + " - " + animeItem.getId());
             String urlAllCHarsIds = URL_ANIME_TAKE + "anime/" + animeItem.getId() + "/relationships/anime-characters";
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(urlAllCHarsIds))
@@ -213,7 +212,7 @@ public class AlimentationService {
                         ? ids.get("id").asLong()
                         : 0L;
 
-                animeItem.getCharacters().add(new CharacterAnime(id,animeItem));
+                animeItem.getCharacters().add(new Character(id,animeItem));
                 cont++;
             }
         }
