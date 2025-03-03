@@ -7,6 +7,10 @@ import { CircleUser } from "lucide-react";
 import Alert from "./Alert";
 import useAlert from "../utils/alertShow";
 import Link from "./Link";
+import anonimo from "../assets/anonimo.png"
+
+
+/// ----------------------------- Data -----------------------------///
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -14,12 +18,25 @@ function RegisterForm() {
     email: "",
     password: "",
     confirm: "",
+    points: 0,
+    image: null
   });
+
+  /// ---------------------------- Nav ---------------------------////
+
+  const navigate = useNavigate(); 
+
+  const redirectLogin = () => {
+    navigate("/login");
+  };
+
+  /// --------------------------- Alert -------------------------////
 
   const [messageError, setErrorMessage] = useState("");
   const { showAlert, openAlert, closeAlert } = useAlert();
 
-  const navigate = useNavigate(); //Hook para navegar entre as paginas
+  /// ----------------------------- Functions ------------------------///
+
 
   const readInputData = (e) => {
     const { name, value } = e.target; //cria uma chave-valor para o evento clicaod
@@ -29,13 +46,17 @@ function RegisterForm() {
     }));
   };
 
-  const redirectLogin = () => {
-    navigate("/login");
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    console.log("Arquivo selecionado:", file);
+    setFormData((oldData) => ({
+      ...oldData,
+      image: file, // Armazena o arquivo de imagem selecionado
+    }));
   };
 
-  const submitFormData = async (e) => {
-    console.log(formData);
 
+  const submitFormData = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirm) {
@@ -44,34 +65,57 @@ function RegisterForm() {
       return;
     }
 
+    const formDataToSend = new FormData();
+    formDataToSend.append("username", formData.username);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("password", formData.password);
+
+    if (formData.image) {
+      formDataToSend.append("image", formData.image);
+    } 
+    else {
+      const image = await fetch(anonimo);
+      const blob = await image.blob();
+      const file = new File([blob], "anonimo.png", { type: "image/png" });
+      formDataToSend.append("image", file);
+    }
+
     try {
       const response = await fetch("http://localhost:5050/register", {
-        //Url Dinamica
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
+      const data = await response.json(); 
+      console.log("Resposta do backend:", data); 
+
       if (!response.ok) {
-        const data = await response.text(); //Valor retornado pelo backEnd
         setErrorMessage(data.message || "Error occurred during registration");
-        openAlert(); // Abre o alerta
-        console.log(data.message || "Ocorreu um erro");
-      } else {
-        navigate("/");
-      }
-    } catch (error) {
-      setErrorMessage(error || "Error occurred during registration");
-      console.log("Erro ao enviar os dados", error);
+        openAlert();
+        return;
+    }
+
+      navigate("/", { state: { data: data }});
+    
+    } 
+    catch (error) {
+      setErrorMessage(error.message || "Error occurred during registration");
       openAlert();
     }
   };
 
   return (
     <div className="w-[500px] h-[500px] rounded-xl shadow-sm bg-slate-100 flex flex-col space-y-5 items-center justify-center p-3">
-      <CircleUser size={60} color="gray" />
+      <input 
+      type="file"
+      name="image"
+      onChange={handleImageChange}
+      style={{ display: "none" }} 
+      id="image-upload" 
+      />
+      <label htmlFor="image-upload"> 
+        <CircleUser size={60} color="gray" style={{ cursor: "pointer" }} />
+      </label>
       <Title>Register new account</Title>
       <Input
         type="text"

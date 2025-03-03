@@ -28,8 +28,9 @@ public class AlimentationService {
     }
 
     protected final int LIMIT_ANIME = 60;
-    protected final int LIMIT_CHAR = 10;
-    protected final String URL_ANIME_TAKE = "https://kitsu.io/api/edge/";
+    protected final int LIMIT_CHAR = 20;
+    //protected final String URL_ANIME_TAKE = "https://kitsu.io/api/edge/";
+    protected final String URL_ANIME_TAKE ="https://api.jikan.moe/v4";
     
     public Optional<Anime> hasAnime(long id){
         return alimentationRepository.findById(id);
@@ -39,16 +40,17 @@ public class AlimentationService {
         return characterRepository.findCharacter(animeTitle,characterName);
     }
 
-    public void takeAnime(){
+    public void takeAnime() throws IOException, InterruptedException {
         //Logic to search anime and chars using an API
-        try{
             //Take the list of anime
             HttpClient client = HttpClient.newBuilder().build();
             int offset = 0;
+            int page = 1;
             boolean existMore = true;
 
             while (existMore) {
-                String apiUrl = URL_ANIME_TAKE + "anime?page[limit]=20&sort=popularityRank&page[offset]=" + offset;
+                String apiUrl = URL_ANIME_TAKE + "/top/anime?filter=bypopularity&type=tv&limit=20&page=" + page;
+                System.out.println(apiUrl);
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(apiUrl))
                         .GET()
@@ -56,7 +58,7 @@ public class AlimentationService {
 
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 if (response.statusCode() != 200)
-                    throw new RuntimeException("Error on using API" + response.statusCode());
+                    throw new RuntimeException("Error on using API - " + response.statusCode());
 
                 System.out.println("Request successful: " + apiUrl);
 
@@ -64,7 +66,7 @@ public class AlimentationService {
                 JsonNode jsonResponse = objectMapper.readTree(response.body());
                 JsonNode animeArray = jsonResponse.get("data");
 
-                if (offset >= LIMIT_ANIME || animeArray == null || !animeArray.isArray() || animeArray.isEmpty()){
+                if (offset >= LIMIT_ANIME || animeArray == null || !animeArray.isArray() || animeArray.isEmpty()) {
                     existMore = false;
                     continue;
                 }
@@ -72,21 +74,21 @@ public class AlimentationService {
                 //Save the list on database
                 for (JsonNode animeItem : animeArray) {
 
-                    long id = animeItem.get("id").asLong();
+                    long id = animeItem.get("mal_id").asLong();
 
-                    String title = animeItem.get("attributes").has("titles") && animeItem.get("attributes").get("titles").has("en")
-                            ? animeItem.get("attributes").get("titles").get("en").asText()
+                    String title = animeItem.has("title_english")
+                            ? animeItem.get("title_english").asText()
                             : null;
-                    String synopsis = animeItem.get("attributes").has("synopsis")
-                            ? animeItem.get("attributes").get("synopsis").asText()
+                    String synopsis = animeItem.has("synopsis")
+                            ? animeItem.get("synopsis").asText()
                             : null;
 
                     if (title == null || synopsis == null || title.isEmpty() || synopsis.isEmpty())
                         continue;
 
-                    System.out.println(animeItem.get("id").asText() + " - " + title);
+                    System.out.println(id + " - " + title);
 
-                    Anime animeAux = new Anime(id,title, synopsis);
+                    Anime animeAux = new Anime(id, title, synopsis);
 
                     Optional<Anime> existAnime = hasAnime(id);
 
@@ -98,88 +100,12 @@ public class AlimentationService {
                     System.out.println(animeAux);
                     alimentationRepository.save(animeAux);
                 }
-                offset += 20; //Add more characters
+                page++;
+                offset+=20; //Add more characters
             }
-
-        }
-        catch(Exception e){
-            System.out.println(e.getMessage());
-            throw new RuntimeException("Error getting anime: " + e.getMessage());
-        }
     }
 
-    public void takeCharsByAnime(){
-        try{
-            //Logic to search the characters by anime on database
-            List<Anime> allAnimes = takeCharsIds();
-            if (allAnimes.isEmpty())
-                return;
-
-            //Take the character info with api
-            for (Anime animeItem : allAnimes) {
-                if (animeItem == null)
-                    continue;
-                String actual_title_anime = animeItem.getTitle();
-                System.out.println("Taking all characters from " + actual_title_anime);
-                for (Character charItem : animeItem.getCharacters()) {
-
-                    if (charItem == null)
-                        continue;
-                    //Build Api url
-                    String url_anime_chars = URL_ANIME_TAKE + "/characters?filter[id]=" + charItem.getId();
-                    HttpClient client = HttpClient.newBuilder().build();
-                    HttpRequest request = HttpRequest.newBuilder()
-                            .uri(new URI(url_anime_chars))
-                            .GET()
-                            .build();
-                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-                    //Take data character response and save
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    JsonNode jsonResponse = objectMapper.readTree(response.body());
-                    JsonNode charData = jsonResponse.get("data");
-                    if (charData.isEmpty())
-                        continue;
-
-                    JsonNode firstCharData = charData.get(0);
-
-                    String charName = firstCharData.has("attributes") && firstCharData.get("attributes").has("name")
-                            ? firstCharData.get("attributes").get("name").asText()
-                            : null;
-                    String charImage = firstCharData.has("attributes") && firstCharData.get("attributes").has("image")
-                            && firstCharData.get("attributes").get("image").has("original")
-                            ? firstCharData.get("attributes").get("image").get("original").asText()
-                            : null;
-
-                    if (charName == null || charImage == null || charName.isEmpty() || charImage.isEmpty()){
-                        System.out.println("Something went wrong");
-                        continue;
-                    }
-
-                    System.out.println("Checking if character already exists...");
-                    Optional<Character> existChar = hasCharacter(actual_title_anime,charName);
-
-                    if (existChar.isPresent()) {
-                        System.out.println("Already exists on database that character");
-                        continue;
-                    }
-                    charItem.setName(charName);
-                    charItem.setImage(charImage);
-                    System.out.println(charItem);
-                    characterRepository.save(charItem);
-
-                }
-                //Take the episodes info with api
-            }
-
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-            throw new RuntimeException("Error getting anime:" + e.getMessage());
-        }
-    }
-
-    public List<Anime> takeCharsIds() throws IOException, InterruptedException {
+    public void takeCharacters() throws IOException, InterruptedException {
         //Take all anime on the database
 
         System.out.println("Taking ids...");
@@ -190,7 +116,7 @@ public class AlimentationService {
 
         for (Anime animeItem : allAnimes){
             System.out.println(animeItem.getTitle() + " - " + animeItem.getId());
-            String urlAllCHarsIds = URL_ANIME_TAKE + "anime/" + animeItem.getId() + "/relationships/anime-characters";
+            String urlAllCHarsIds = URL_ANIME_TAKE + "/anime/" + animeItem.getId() + "/characters";
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(urlAllCHarsIds))
                     .GET()
@@ -200,24 +126,68 @@ public class AlimentationService {
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.readTree(response.body());
-            JsonNode characterIds = jsonResponse.get("data");
+            JsonNode characterData = jsonResponse.get("data");
+
+            //System.out.println(characterData);
 
             int cont = 0;
-            for (JsonNode ids : characterIds){
+            for (JsonNode charData : characterData){
                 if (cont >= LIMIT_CHAR){
                     break;
                 }
 
-                long id = ids.has("id")
-                        ? ids.get("id").asLong()
+                long idChar = charData.has("character") && charData.get("character").has("mal_id")
+                        ? charData.get("character").get("mal_id").asLong()
                         : 0L;
+                String nameChar = charData.has("character") && charData.get("character").has("name")
+                        ? charData.get("character").get("name").asText()
+                        : null;
 
-                animeItem.getCharacters().add(new Character(id,animeItem));
+                String imageChar = charData.has("character") && charData.get("character").has("images") && charData.get("character").get("images").has("jpg") && charData.get("character").get("images").get("jpg").has("image_url")
+                        ? charData.get("character").get("images").get("jpg").get("image_url").asText()
+                        : null;
+
+                if (imageChar == null) {
+                    imageChar = charData.has("character") && charData.get("character").has("images") && charData.get("character").get("images").has("webp") && charData.get("character").get("images").get("webp").has("image_url")
+                            ? charData.get("character").get("images").get("webp").get("image_url").asText()
+                            : null;
+                }
+                System.out.println(imageChar);
+                if (nameChar == null || imageChar == null || nameChar.isEmpty() || imageChar.isEmpty())
+                    continue;
+
+                //Validation name
+                String firstName = "";
+                String secondName = "";
+                boolean hasSecondName = false;
+                for (int i=0; i < nameChar.length(); ++i){
+                    if (nameChar.charAt(i) == ','){
+                        hasSecondName = true;
+                        continue;
+                    }
+                    if (hasSecondName){
+                        secondName += nameChar.charAt(i);
+                        continue;
+                    }
+                    firstName += nameChar.charAt(i);
+                }
+
+                if (hasSecondName){
+                    nameChar = secondName + " " + firstName;
+                }
+
+                Optional<Character> optional = characterRepository.findById(idChar);
+                if (optional.isPresent())
+                    continue;
+
+                //If character not present in database
+                System.out.println(idChar + nameChar);
+                Character character = new Character(idChar,nameChar,imageChar,animeItem);
+                characterRepository.save(character);
                 cont++;
             }
         }
 
         System.out.println("Take ids Successfully");
-        return allAnimes;
     }
 }

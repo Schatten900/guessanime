@@ -37,7 +37,7 @@ function HeaderPage(props){
                 />
 
                 <House 
-                onClick={()=>redirectPages("home")}
+                onClick={()=>redirectPages("")}
                 size={50}
                 color="white"
                 cursor="pointer"

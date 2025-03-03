@@ -1,4 +1,5 @@
 package com.anime.guessanime.Models;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,10 +23,8 @@ public class Anime {
     private String synopsis;
 
     @OneToMany(mappedBy = "anime")
+    @JsonManagedReference
     private List<Character> characters = new ArrayList<>();
-
-    //@OneToMany(mappedBy = "anime")
-    //private List<Episode> episodes = new ArrayList<>();
 
     public Anime(){
     }

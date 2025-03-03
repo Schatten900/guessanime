@@ -2,11 +2,12 @@ package com.anime.guessanime.Controllers;
 import com.anime.guessanime.Models.User;
 import com.anime.guessanime.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/login")
@@ -19,18 +20,30 @@ public class LoginController {
     }
 
     @PostMapping
-    public ResponseEntity<String> loginUser(@RequestBody User data){
+    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginData){
         try {
+            String email = loginData.get("email");
+            String password = loginData.get("password");
+            
             System.out.println("Before saving: "
-                    + "email: " + data.getEmail().get() + " "
-                    + "password: " + data.getPassword().get());
-            userService.LoginUser(data.getEmail().get(),data.getPassword().get());
+                    + "email: " + email + " "
+                    + "password: " + password);
+            User user = userService.LoginUser(email,password);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", user.getId());
+            response.put("username", user.getUsername().get());
+            response.put("email", user.getEmail().get());
+            response.put("points", user.getPoints());
+            response.put("image", user.getImageBase64());
+
             System.out.println("Successfully on login");
-            return ResponseEntity.ok("Data received successfully");
+            return ResponseEntity.ok(Map.of("message", "Successfully on login", "user", response));
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
-            return ResponseEntity.status(500).body("Error while search user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Failed on login: " + e.getMessage()));
         }
     }
 

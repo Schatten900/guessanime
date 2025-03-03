@@ -23,14 +23,11 @@ function LoginForm() {
     }));
   };
 
-  // ------------------------  Input ------------------------ //
-
   // ------------------------  Error ------------------------ //
 
   const { showAlert, openAlert, closeAlert } = useAlert();
   const [alertMessage, setAlertMessage] = useState("");
 
-  // ------------------------  Error ------------------------ //
 
   // ------------------------  Nav ------------------------ //
   const navigate = useNavigate();
@@ -38,10 +35,11 @@ function LoginForm() {
   const redirectRegister = () => {
     navigate("/register");
   };
-  // ------------------------  Nav ------------------------ //
+  // ------------------------  Functions ------------------------ //
 
   const submiteFormData = async (e) => {
     e.preventDefault();
+
 
     try {
       const response = await fetch("http://localhost:5050/login", {
@@ -52,13 +50,15 @@ function LoginForm() {
         body: JSON.stringify(formData),
       });
 
+      const data = await response.json(); 
+
       if (!response.ok) {
-        const data = await response.text;
-        setAlertMessage(data.message || "Login failed");
+        setAlertMessage(data.message || "Error occurred during registration");
         openAlert();
-      } else {
-        navigate("/");
-      }
+        return;
+    }
+      navigate("/", {state: {data: data}});
+      
     } catch (error) {
       setAlertMessage(error || "Something went wrong while logging");
       openAlert();

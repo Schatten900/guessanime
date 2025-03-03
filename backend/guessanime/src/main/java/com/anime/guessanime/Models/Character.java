@@ -1,4 +1,5 @@
 package com.anime.guessanime.Models;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,18 +21,24 @@ public class Character {
 
     @ManyToOne
     @JoinColumn(name="ID_ANIME")
+    @JsonBackReference
     private Anime anime;
 
     public Character(){}
 
-    public Character(long id, Anime anime){
-        this.id = id;
-        this.anime = anime;
-    }
-
     public Character(String name, String image){
         this.name = name;
         this.image = image;
+    }
+
+    public Character(Long id, String name, String image, Anime anime){
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.anime = anime;
+        if (anime != null) {
+            anime.getCharacters().add(this); // Adiciona o character à lista do anime
+        }
     }
 
     @Override

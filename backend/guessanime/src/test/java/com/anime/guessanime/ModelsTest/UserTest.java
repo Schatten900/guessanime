@@ -20,7 +20,7 @@ public class UserTest {
     @Test
     public void ValidUser(){
         assertDoesNotThrow(()->{
-            user.setUser(VALID_USERNAME,VALID_EMAIL,VALID_PASSWORD);
+            user.setUser(VALID_USERNAME,VALID_EMAIL,VALID_PASSWORD,0);
         });
 
     }
@@ -28,14 +28,14 @@ public class UserTest {
     @Test
     public void InvalidUser(){
         assertThrows(IllegalArgumentException.class,()->{
-            user.setUser(INVALID_USERNAME,INVALID_EMAIL,INVALID_PASSWORD);
+            user.setUser(INVALID_USERNAME,INVALID_EMAIL,INVALID_PASSWORD,0);
         });
     }
 
     @Test
     public void NullUser(){
         assertThrows(IllegalArgumentException.class,()->{
-            user.setUser(NULL_USERNAME,NULL_EMAIL,NULL_PASSWORD);
+            user.setUser(NULL_USERNAME,NULL_EMAIL,NULL_PASSWORD,0);
         });
     }
 }

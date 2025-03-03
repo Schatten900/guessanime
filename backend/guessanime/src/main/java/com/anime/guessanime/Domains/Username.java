@@ -1,7 +1,12 @@
 package com.anime.guessanime.Domains;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Transient;
+import lombok.Getter;
+import lombok.Setter;
 
+
+@Getter
+@Setter
 @Embeddable
 public class Username extends Dominio{
 

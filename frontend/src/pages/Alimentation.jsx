@@ -11,9 +11,7 @@ function Alimentation(){
     const {showAlert, openAlert,closeAlert} = useAlert();
 
     const handleMessageOfBackEnd = async () => {
-        console.log("Hi");
         try{
-        
             const response = await fetch("http://localhost:5050/alimentation",{
                 method:"POST",
                 headers: {
@@ -42,8 +40,11 @@ function Alimentation(){
     return (
         <div className="w-screen h-screen flex flex-col justify-center items-center bg-slate-100">
             <div className="flex flex-col justify-center"> 
+
             <SubmitButton onClick={handleMessageOfBackEnd}>Ask for animes</SubmitButton>
+
             <Text>{messageBackEnd}</Text>
+
             {showAlert && <Alert messageError={messageError} onClick={closeAlert}/>}
 
             </div>

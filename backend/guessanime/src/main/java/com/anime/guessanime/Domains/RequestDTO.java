@@ -6,4 +6,5 @@ import lombok.Getter;
 @Setter
 public class RequestDTO {
     private String message;
+    private int quantity;
 }

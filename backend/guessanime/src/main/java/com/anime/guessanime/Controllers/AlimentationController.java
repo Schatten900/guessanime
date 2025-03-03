@@ -24,15 +24,14 @@ public class AlimentationController {
     public ResponseEntity<String> takeAnimeAndChars(@RequestBody RequestDTO data){
         try{
             System.out.println("Hello from frontend: " + data.getMessage());
-            alimentationService.takeCharsIds();
-            //alimentationService.takeAnime();
-            //alimentationService.takeCharsByAnime();
+            alimentationService.takeAnime();
+            alimentationService.takeCharacters();
 
             return ResponseEntity.ok().body("Successfully on take anime");
         }
         catch(Exception e){
-            System.out.println("Error Occurred: " + e.getMessage());
-            return ResponseEntity.status(500).body("Error Ocorrured:" + e.getMessage());
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(500).body(e.getMessage());
         }
     }
 }
