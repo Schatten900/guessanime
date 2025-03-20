@@ -20,6 +20,13 @@ Utilizando de dois servidores distintos para execução do backend e do frontend
 Após ambos servidores serem ligados, o usuário navegará na URL: 
 ```http://localhost:5173```
 
+---
+# Interface
+![Texto alternativo](frontend/src/assets/home)
+![Texto alternativo](frontend/src/assets/round)
+![Texto alternativo](frontend/src/assets/synopsis_summary)
+![Texto alternativo](frontend/src/assets/winning)
+
 # Autor
 - Carlos Cauã
 
