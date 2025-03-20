@@ -26,6 +26,7 @@ Após ambos servidores serem ligados, o usuário navegará na URL:
 ![round_interface](frontend/src/assets/round.png)
 ![summary_interface](frontend/src/assets/synopsis_summary.png)
 ![winning_interface](frontend/src/assets/winning.png)
+![home_interface](frontend/src/assets/ranking.png)
 
 # Autor
 - Carlos Cauã
