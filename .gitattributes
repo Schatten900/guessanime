@@ -1,0 +1,2 @@
+backend/guessanime/src/main/python_files/venv/Lib/site-packages/torch/lib/dnnl.lib filter=lfs diff=lfs merge=lfs -text
+backend/guessanime/src/main/python_files/venv/Lib/site-packages/torch/lib/torch_cpu.dll filter=lfs diff=lfs merge=lfs -text

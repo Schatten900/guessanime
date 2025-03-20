@@ -1,0 +1,27 @@
+.home-character-right-image{
+    position:fixed;
+    bottom:0;
+    right:0;
+    height: auto;
+    width: 250px;
+    z-index: 10;
+}
+
+.home-character-left-image{
+    position:fixed;
+    bottom:0;
+    left:0;
+    height: auto;
+    width: 180px;
+    z-index: 10;
+    padding-left: 5px;
+}
+
+.home-character-center-image{
+    position:fixed;
+    bottom:0;
+    height: auto;
+    width: 250px;
+    z-index: 10;
+    padding-bottom: 5px;
+}
