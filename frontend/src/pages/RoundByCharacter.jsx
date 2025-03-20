@@ -1,16 +1,11 @@
 import HeaderPage from "../components/HeaderPage";
 import { useEffect, useState } from "react";
-<<<<<<< HEAD
 import { useLocation, useNavigate } from "react-router-dom";
-=======
-import { useLocation } from "react-router-dom";
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97
 import SelectType from "../components/SelectType";
 import Base from "../components/Base";
 import Alert from "../components/Alert";
 import useAlert from "../utils/alertShow";
 import SubmitButton from "../components/SubmitButton";
-<<<<<<< HEAD
 import EndGame from "../components/EndGame";
 import AIPopUP from '../components/AIPopUP';
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -44,28 +39,11 @@ function RoundByCharacter() {
   const [currentSynopsis, setCurrentSynopsis] = useState("");
   const [pauseGame, setPauseGame] = useState(false);
   const [isLoading, setIsLoading] = useState(false); 
-=======
-
-function RoundByCharacter(props) {
-  // ---------------- Character --------------------//
-  const location = useLocation();
-  const characters = location.state?.characters || [];
-  const userData = location.user?.userData || [];
-
-
-  // ---------------- Options ----------------------//
-  const [gameOver, setGameOver] = useState(false); 
-  const [currentRound,setCurrentRound] = useState(0);
-  const currentRoundData = characters[currentRound];
-  const [currentImage,setCurrentImage] = useState(null);
-  const [timeLeft,setTimeLeft] = useState(30);
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97
 
   // ---------------- Error ----------------------//
   const [messageError, setErrorMessage] = useState("");
   const { showAlert, openAlert, closeAlert } = useAlert();
 
-<<<<<<< HEAD
   // ----------------- Effects -------------------//
   useEffect(() => {
     if (currentRoundData && Array.isArray(currentRoundData)) {
@@ -99,22 +77,6 @@ function RoundByCharacter(props) {
       setGameResult("lose"); 
       setGameOver(true);
       updateUserPoints();
-=======
-
-  // ----------------- Effects -------------------//
-
-  useEffect(()=>{
-    currentRoundData.map((pair, index) => (
-      pair.r ? setCurrentImage(pair.l.image) : null
-    ))
-    setTimeLeft(30);
-  }, [currentRound])
-
-  useEffect(() => {
-    
-    if (timeLeft === 0) {
-      setCurrentRound(0);
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97
       return;
     }
 
@@ -123,35 +85,16 @@ function RoundByCharacter(props) {
     }, 1000);
 
     return () => clearInterval(timer);
-<<<<<<< HEAD
   }, [timeLeft,pauseGame, currentRound]);
 
   // ---------------- Functions ------------------//
   const selectOption = (option) => {
     if (!option) {
       setGameResult("lose"); 
-=======
-  }, [timeLeft, currentRound]);
-
-
-  // ---------------- Functions ------------------//
-
-  const selectOption = (option) => {
-    if (!option){
-      setTimeout(() => {
-        setCurrentRound(0); 
-      }, 1000); 
-      return;
-    };
-
-    //Check if is final round
-    if (currentRound >= characters.length){
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97
       setGameOver(true);
       return;
     }
 
-<<<<<<< HEAD
     // Check if is final round
     if (currentRound + 1 >= rounds) {
       setGameResult("win"); 
@@ -249,22 +192,10 @@ function RoundByCharacter(props) {
     finally {
       setIsLoading(false); 
   }
-=======
-    setTimeout(()=>{
-      setCurrentRound(currentRound + 1);
-    }, 1000)
-
-  };
-
-  //Call python function to create text resume from right anime
-  const helpByIA = () => {
-
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97
   };
 
   return (
     <div className="flex flex-col items-center justify-between space-y-4 h-screen">
-<<<<<<< HEAD
       <HeaderPage userData={userData} setUserData={setUserData} />
       {isLoading && (
         <>
@@ -315,47 +246,9 @@ function RoundByCharacter(props) {
       )}
 
       <Base round={`Round: ${currentRound + 1}`} time={timeLeft} />
-=======
-      <HeaderPage username={userData.username} image={props.image} />
-
-      <SubmitButton onClick={() => {helpByIA}}>
-        Help
-      </SubmitButton>
-
-      <div className="flex flex-col justify-center items-center space-y-8">
-        <div className="w-[500px] h-[300px] bg-white rounded-3xl border-2 border-black-200">
-          <img
-            className="w-[100%] h-[100%] rounded-3xl"
-            src={currentImage}
-            alt="char-image"
-          />
-        </div>
-
-        <div className="w-[600px] h[120px] flex flex-wrap justify-center gap-2 ">
-        {!gameOver ? (
-            currentRoundData.map((pair, index) => (
-              <SelectType
-                key={index}
-                onClick={() => selectOption(pair.r)} 
-              >
-                {pair.l.name}
-              </SelectType>
-            ))
-          ) : (
-            <p>Congratulations! You completed all rounds!</p>
-          )}
-        </div>
-      </div>
-
-      <Base round={`Round: ${currentRound+1}`} time={timeLeft} />
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97
       {showAlert && <Alert messageError={messageError} onClick={closeAlert} />}
     </div>
   );
 }
 
-<<<<<<< HEAD
 export default RoundByCharacter;
-=======
-export default RoundByCharacter;
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97

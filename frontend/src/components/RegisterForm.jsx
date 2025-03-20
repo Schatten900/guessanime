@@ -95,11 +95,7 @@ function RegisterForm() {
         return;
     }
 
-<<<<<<< HEAD
       navigate("/", { state: { userData: data }});
-=======
-      navigate("/", { state: { data: data }});
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97
     
     } 
     catch (error) {
@@ -109,13 +105,9 @@ function RegisterForm() {
   };
 
   return (
-<<<<<<< HEAD
     <form 
     onSubmit={submitFormData}
     className="w-[500px] h-[500px] rounded-xl shadow-sm bg-slate-100 flex flex-col space-y-5 items-center justify-center p-3">
-=======
-    <div className="w-[500px] h-[500px] rounded-xl shadow-sm bg-slate-100 flex flex-col space-y-5 items-center justify-center p-3">
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97
       <input 
       type="file"
       name="image"
@@ -159,11 +151,7 @@ function RegisterForm() {
       <Link onClick={redirectLogin}>You do not have an account yet?</Link>
 
       {showAlert && <Alert message={messageError} onClick={closeAlert} />}
-<<<<<<< HEAD
     </form>
-=======
-    </div>
->>>>>>> 72179ae2e09fad21eb6c049313959d099f3e7b97
   );
 }
 
