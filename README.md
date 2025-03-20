@@ -22,10 +22,10 @@ Após ambos servidores serem ligados, o usuário navegará na URL:
 
 ---
 # Interface
-![Texto alternativo](frontend/src/assets/home)
-![Texto alternativo](frontend/src/assets/round)
-![Texto alternativo](frontend/src/assets/synopsis_summary)
-![Texto alternativo](frontend/src/assets/winning)
+![home_interface](frontend/src/assets/home.png)
+![round_interface](frontend/src/assets/round.png)
+![summary_interface](frontend/src/assets/synopsis_summary.png)
+![winning_interface](frontend/src/assets/winning.png)
 
 # Autor
 - Carlos Cauã
